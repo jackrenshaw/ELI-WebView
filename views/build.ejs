@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="circuit" data-="">
+    <meta name="match" data-="">
     <title>ELI - UNSW ELEC2133</title>
     <link rel="stylesheet" href="../bulma/css/bulma.min.css">
     <link rel="stylesheet" href="../bulma-extensions/dist/css/bulma-extensions.min.css">
@@ -60,11 +61,11 @@
               check
               </span>
             </a>
-            <a class="navbar-item" data-action="upsync">
-              <span class="material-icons">
-                sync
-                </span>
-              </a>
+              <button class="navbar-item" data-action="implement" data-analog="[0.0,0.0]" data-token="ELEC2133" disabled="" style="background-color: #363636;color:#aaa;border: none;" data-alt="0">
+                <span class="material-icons">
+                  run_circle
+                  </span>
+                </button>
         </div>
     </div>
   </nav>
@@ -152,11 +153,48 @@ $("a[data-action='download']").click(function(){
 })
 
 $("a[data-action='check']").click(function(){
+  upSync();
   Check.Validate();
 })
 
 $("a[data-action='upsync']").click(function(){
   upSync();
+});
+
+$("button[data-action='implement']").click(function(){
+  console.log($(this).data());
+  let _button = this;
+  $.get("http://127.0.0.1:3001/implement",{
+    token:$(_button).data("token"),
+    output:{
+      "Digital":$(_button).data("digital"),
+      "Analog":$(_button).data("analog"),
+    }
+  }).done(function(data){
+    console.log(data);
+    let receipt = "";
+    for(var i of data)
+      receipt += (i["type"]+" "+i["port"]+": <b>"+i["value"]+"</b><br>")
+    UI.Notification("Success","Output Receipt",receipt);
+  }).fail(function(error){
+    console.log(error)
+  })
+})
+
+$("button[data-action='simulate']").click(function(){
+  console.log($(this).data());
+  let _button = this;
+  $.get("http://127.0.0.1:3001/simulate",{
+    token:$(_button).data("token"),
+    output:{
+      "Digital":$(_button).data("digital"),
+      "Analog":$(_button).data("analog"),
+    }
+  }).done(function(data){
+    console.log(data);
+  }).fail(function(error){
+    console.log(error)
+  })
 })
 
 
@@ -173,7 +211,11 @@ function download(filename, text) {
   document.body.removeChild(element);
 }
 
+let matchedAlt = null;
+
 function generatePreload(){
+      UI.SET();
+      Check.Validate();
       var preload = {
         voltage1:null,
         voltage2:null,
@@ -181,7 +223,8 @@ function generatePreload(){
         siggen_voltage:null,
         board:$("#main").html(),
         connectors:$("connectors").html(),
-        meta:$("meta[name='circuit']").data()
+        meta:$("meta[name='circuit']").data(),
+        match:$("meta[name='match']").data()
       }
       return preload
     }
@@ -195,6 +238,10 @@ $("html").on("dragleave", function(event) {
     event.preventDefault();  
     event.stopPropagation();
     $(this).removeClass('dragging');
+});
+
+$("button[data-action='implement']").click(function(){
+  console.log("Hello World");
 });
 
 $("html").on("drop", function(ev) {
