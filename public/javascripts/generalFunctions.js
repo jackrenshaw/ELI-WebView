@@ -40,7 +40,6 @@ const CheckContinuity = function(wirespans){
 }
 
 Simulate = function(){
-  Check.SetComponents();
   $("wire").each(function(){
     $(this).addClass("has-tooltip-arrow").addClass("has-tooltipl-multiline");
     $(this).attr("data-tooltip","Node:"+$(this).attr("data-spice-node"));
@@ -51,11 +50,11 @@ Simulate = function(){
   });
   $("#sidebar .container div[name='SPICE']").html("");
   //$("#sidebar").show();
-  html2canvas(document.querySelector("body")).then(canvas1 => {
+
     //$("#sidebar .container div[name='SPICE']").append("<br><h2>Circuit Image</h2><p>You can right click on this image to save it</p>");
     //$("#sidebar .container div[name='SPICE']").append(canvas1);
     //$("#sidebar .container div[name='SPICE']").append("<hr>");
-
+  UI.makeSPICE()
     $("#sidebar .container div[name='SPICE'] canvas").css("width","25%").css("height","25%").css("margin-bottom","-100px");
   $("#sidebar .container div[name='SPICE']").append("<br><h2 class='subtitle'>Conversion Output</h2>");
   UI.makeSPICE("simulation",function(error){
@@ -69,7 +68,13 @@ There was an error simulating the circuit. Please check your circuit<br>
     $("#sidebar .container div[name='SPICE']").append(input+"<br>");
   },function(netlist,normalised){
     console.log("Simualting and Validating Circuit");
-    window.electronAPI.SimulateCircuit(netlist);
+      $.get("http://127.0.0.1:3001/simulate",{
+        circuit:netlist
+      }).done(function(data){
+        console.log(data);
+      }).fail(function(error){
+        console.log(error)
+      })
     console.log(netlist)
     $("body #Notifications").append(`<div class="notification is-info  is-light">
     <button class="delete" onclick='$(this).parent().remove()'></button>
@@ -86,8 +91,6 @@ The circuit is below
       //$("#sidebar .container div[name='SPICE'] canvas").css("width","25%").css("height","25%").css("margin-bottom","-100px");;
       UI.hideNodes()
     });
-  });
-
 }
 
 function download(filename, text) {
