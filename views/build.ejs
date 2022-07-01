@@ -61,7 +61,7 @@
               check
               </span>
             </a>
-            <a class="navbar-item" data-action="check" onclick="Simulate()" disabled>
+            <a class="navbar-item" data-action="simulate" onclick="upSync();Check.Validate();Simulate();" disabled>
               <span class="material-icons">
                 play_circle
                 </span>
@@ -80,6 +80,255 @@
 <main id='main'>
   <% if(build.board){%><%-build.board%><%}%>
   </main>
+
+<!--Modals-->
+<div class="modal" id="VariableResistor">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Variable Resistor</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <label for="vresistance" class="form-label">Resistance Value</label>
+      <center><h5 class="title"></h5></center>
+      <input type="range" class="slider is-fullwidth" min="0" max="100" step="1" name="vresistance" value='100'>
+    </section>
+      <footer class="modal-card-foot">
+        <button class="button is-info" onclick="SaveVariableResistance();">Close</button>
+      </footer>
+    </div>
+</div>
+<div class="modal" id="Override">
+  <script type="text/javascript">
+    $(document).ready(function(){
+    $("#Override input[type='password']").keyup(function(){
+        $("#Override button[data-action='open-pane']").attr("data-token",$(this).val());
+        $("#Override button[data-action='open-pane']").removeAttr("disabled");
+    })
+  })
+  </script>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Manually Implement Circuit</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <div class="field">
+        <p class="control has-icons-left">
+          <input class="input" type="password" placeholder="Password">
+          <span class="icon is-small is-left">
+            <span class="material-icons">key</span>
+          </span>
+        </p>
+      </div>
+      <div class="implement-button">
+        <button data-action='open-pane' class='button is-info' data-token="" disabled>Open Control Panel</button>
+      </div>
+    </section>
+      <footer class="modal-card-foot">
+        <button class="button is-info">Close</button>
+      </footer>
+    </div>
+</div>
+<div class="modal" id="Simulation">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Simulation Output</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+      <div class="modal-card-body">
+        <h6>Simulation Output</h6>
+        <p class="sim-result"></p>
+        <h6>Validation Notes</h6>
+        <p class="validation-result"></p>
+        <div class="comparison-area"></div>
+      </div>
+      <footer class="modal-card-foot">
+        <button class="button is-info">Close</button>
+      </footer>
+    </div>
+</div>
+<div class="modal" id="Source">
+  <div class="modal-background"></div>
+  <script type="text/javascript">
+    $(document).ready(function(){
+    $("#Source input[name=voltage1],#Source input[name=voltage2]").click(function(){
+      console.log("Testing");
+      var val = ($(this).val()).toString();
+      if(!val.includes(".")) val += '.0';
+      $("#Source table td[name="+$(this).attr('name')+"]").text(val+" V")
+    })
+  });
+    </script>
+     <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Power Supply</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+        <div class="modal-card-body">
+          <table style="width: 100%;text-align: center;"><thead><tr><th>Supply 1</th><th>Supply 2</th></tr></thead><tr class="font-size:48px;"><td name="voltage1">5.0 V</td><td name="voltage2">5.0 V</td></tr></table>
+          <hr/>
+          <label for="voltage1" class="form-label">Voltage 1</label>
+          <input type="range" class="slider is-fullwidth" min="0" max="15" step="0.1" name="voltage1" value='5.0'>
+          <label for="voltage2" class="form-label">Voltage 2</label>
+          <input type="range" class="slider is-fullwidth" min="0" max="15" step="0.1" name="voltage2" value='5.0'>
+        </div>
+        <footer class="modal-card-foot">
+          <button class="button is-info">Close</button>
+        </footer>
+      </div>
+</div>
+<div class="modal" id="SignalGenerator">
+  <div class="modal-background"></div>
+    <script type="text/javascript">
+      $(document).ready(function(){
+      $("#SignalGenerator input[name=voltage],#SignalGenerator div[name='voltage-multiple'] input[type='radio']").click(function(){
+        var scale = 0.1;
+        var multiple = $("#SignalGenerator div[name='voltage-multiple'] input[type='radio']:checked").val()
+        var val = ($("#SignalGenerator input[name=voltage]").val()*multiple).toString();
+        if(!val.includes(".")) val += '.0';
+        $("#SignalGenerator table td[name=voltage]").text(val+" V")
+      })
+      $("#SignalGenerator input[name=frequency],#SignalGenerator div[name='freq-multiple'] input[type='radio']").click(function(){
+        var multiple = $("#SignalGenerator div[name='freq-multiple'] input[type='radio']:checked").val()
+        var val = $("#SignalGenerator input[name=frequency]").val()*multiple;
+        if(val >1e6) val = val/1e6 + " MHz"
+        else if(val > 1e3) val = val/1e3 +" kHz"
+        else val = val + " Hz"
+        $("#SignalGenerator table td[name=frequency]").text(val)
+      })
+      $("#SignalGenerator .type a").click(function(){
+        $(this).parent().parent().parent().find("a").removeClass("is-info").addClass("is-white");
+        $(this).addClass("is-info").removeClass("is-white")
+      })
+    });
+    </script>
+    <style>
+      #SignalGenerator .type .active{
+        background: cornflowerblue;
+      }
+    </style>
+     <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Signal Generator</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+        <form class="modal-card-body">
+          <h1><table style="width: 100%;text-align: center;"><tr><td name="voltage">0 V</td><td name="frequency">0 Hz</td></tr></table></h1>
+          <hr/>
+          <label for="voltage" class="form-label">Voltage</label>
+          <input type="range" class="slider is-fullwidth" min="0" max="100" step="1" name="voltage" value='0'>
+          <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="margin: auto;" name='voltage-multiple'>
+            <input type="radio" class="btn-check" name="btnradio-voltage" id="voltage-multiple-btnradio1" autocomplete="off" value='0.001' checked>
+            <label class="btn btn-outline-primary" for="voltage-multiple-btnradio1">100mV</label>
+          
+            <input type="radio" class="btn-check" name="btnradio-voltage" id="voltage-multiple-btnradio2" autocomplete="off" value='0.01'>
+            <label class="btn btn-outline-primary" for="voltage-multiple-btnradio2">1V</label>
+
+            <input type="radio" class="btn-check" name="btnradio-voltage" id="voltage-multiple-btnradio3" autocomplete="off" value='0.1'>
+            <label class="btn btn-outline-primary" for="voltage-multiple-btnradio3">10V</label>
+          </div>
+        <hr/>
+        <label for="frequency" class="form-label">Frequency</label>
+        <input type="range" class="slider is-fullwidth" min="0" max="1000" step="1" id="frequency" name='frequency' value='0'>
+        <br>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="margin: auto;" name='freq-multiple'>
+          <input type="radio" class="btn-check" name="btnradio-frequency" id="freq-multiple-btnradio1" autocomplete="off" value='1' checked>
+          <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">1kHz</label>
+        
+          <input type="radio" class="btn-check" name="btnradio-frequency" id="freq-multiple-btnradio2" autocomplete="off" value='10'>
+          <label class="btn btn-outline-primary" for="freq-multiple-btnradio2">10kHz</label>
+        
+          <input type="radio" class="btn-check" name="btnradio-frequency" id="freq-multiple-btnradio3" autocomplete="off" value='100'>
+          <label class="btn btn-outline-primary" for="freq-multiple-btnradio3">100kHz</label>
+
+          <input type="radio" class="btn-check" name="btnradio-frequency" id="freq-multiple-btnradio4" autocomplete="off" value='1000'>
+          <label class="btn btn-outline-primary" for="freq-multiple-btnradio4">1MHz</label>
+        </div>
+        <hr/>
+          <div class="columns type">
+            <div class="column">
+              <a class='button is-large is-white' style="border:1px solid #c0c0c0;" name="sine">
+                <img src='../images/sineWave.svg'  style="background-size:50px; height: 50px;width:50px;">
+              </a>
+            </div>
+            <div class="column">
+              <a class='button is-large is-white' style="border:1px solid #c0c0c0;" name="square">
+                <img src='../images/squareWave.svg' style="background-size:50px; height: 50px;width:50px;">
+              </a>
+            </div>
+            <div class="column">
+              <a class='button is-large is-white' style="border:1px solid #c0c0c0;" name="triangle">
+                <img src='../images/triangleWave.svg' style="background-size:50px; height: 50px;width:50px;">
+              </a>
+            </div>
+            <div class="column">
+              <a class='button is-large is-white' style="border:1px solid #c0c0c0;" name="sawtooth">
+                <img src='../images/sawtoothWave.svg' style="background-size:50px; height: 50px;width:50px;">
+              </a>
+            </div>
+          </div>
+        </form>
+        <footer class="modal-card-foot">
+          <button class="button is-info">Close</button>
+        </footer>
+      </div>
+  </div>
+  <div class="modal" id="Oscilloscope">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Oscilloscope</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+        <section class="modal-card-body">
+          <h5 class="title">Simulation Setup</h5>
+          <div>
+          <h6 class="subtitle">Simulation Line</h6>
+            <input type="text" class="input" value="tran 20u 20m" name="simulation-line" value="">
+            <br><hr>
+            <form name="scope1-transformation">
+          <h6 class="subtitle">Scope 1 Transformation</h6>
+            <input type="radio" class="btn-check" name="type" value='none'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">None</label>
+
+            <input type="radio" class="btn-check" name="type" value='log'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">Log</label>
+          
+            <input type="radio" class="btn-check" name="type" value='mult'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio2">Scale</label>
+          
+            <input type="radio" class="btn-check" name="type" value='diff'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio3">Difference</label><br>
+            <label>Factor</label><input type="text" class="input" name="factor" value="1">
+
+            </form>
+          <hr>
+          <form name="scope2-transformation">
+          <h6 class="subtitle">Scope 2 Transformation</h6>
+            <input type="radio" class="btn-check" name="type" value='none'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">None</label>
+
+            <input type="radio" class="btn-check" name="type" value='log'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">Log</label>
+          
+            <input type="radio" class="btn-check" name="type" value='mult'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio2">Scale</label>
+          
+            <input type="radio" class="btn-check" name="type" value='diff'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio3">Difference</label><br>
+            <label>Factor</label><input type="text" class="input" name="factor" value="1">
+          </form>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-info">Close</button>
+        </footer>
+      </div>
+  </div>
+<!--End Modals-->
   <connectors>
     <% if(build.connectors){%><%-build.connectors%><%}else{%>
     <port data-spice-node="999" style='position: absolute;top:650px;left:75px;background: red;height:300px;width:6px;z-index:0;' name="powersupply-1-positive" data-spice-bench="PowerSupply 1">
@@ -117,10 +366,21 @@
     <div style="position: absolute;height: 200px;width:0px;border-left:2px dashed #777;left:900px;top:700px;"></div>
     <%}%>
     </connectors>
-  <footer class="main-footer" data-html2canvas-ignore>
-  <div class="container content has-text-centered">
-  </div>
-</footer>
+    <footer class="main-footer" data-html2canvas-ignore>
+      <div class="container content has-text-centered">
+        <div class="columns">
+          <powersupply class="column is-4 text-center" id="powersupply">
+            <button type="button" class="button is-dark" onclick="$('#Source').addClass('is-active');">Power Supply</button>
+          </powersupply>
+          <signalgenerator class="column is-4  text-center" id="signalgenerator">
+            <button type="button" class="button is-dark" onclick="$('#SignalGenerator').addClass('is-active');">Signal Generator</button>
+          </signalgenerator>
+          <oscilloscope class="column is-4  text-center" id="oscilloscope">
+            <button type="button" class="button is-dark" onclick="$('#Oscilloscope').addClass('is-active');">Oscilloscope</button>
+          </oscilloscope>
+        </div>
+      </div>
+    </footer>
 
 <div class="modal" id="LoadFile">
   <div class="modal-background"></div>
@@ -187,6 +447,7 @@ $("button[data-action='implement']").click(function(){
 })
 
 $("button[data-action='simulate']").click(function(){
+  console.log("SImualting Circuit");
   console.log($(this).data());
   let _button = this;
   $.get("http://127.0.0.1:3001/simulate",{
@@ -298,6 +559,9 @@ $("html").on("drop", function(ev) {
         $("connectors").html(data.connectors);
         UI.SET();
         Check.Validate();
+    })
+    $("button.delete,button:contains('Close')").click(function(){
+      $(".modal").removeClass("is-active")
     })
   }
 </script>

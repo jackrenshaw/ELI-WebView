@@ -33,7 +33,6 @@ router.get('/v/:c', function(req, res, next) {
 
 router.get("/api/:c",function(req,res,next){
   console.log("Recieved downsync request");
-  console.log(req.params.c);
   if(builds.hasOwnProperty(req.params.c))
     res.send(JSON.stringify(builds[req.params.c]))
   else
@@ -42,10 +41,7 @@ router.get("/api/:c",function(req,res,next){
 
 router.post("/api/:c",function(req,res,next){
   console.log("Recieved upsync request");
-  console.log(req.params.c);
-  console.log(req.body);
   builds[req.params.c] = JSON.parse(req.body.build);
-  console.log(builds);
   res.status(200).send(JSON.stringify(builds[req.params.c]));
 })
 

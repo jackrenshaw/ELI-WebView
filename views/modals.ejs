@@ -1,0 +1,375 @@
+<div class="modal" id="login-modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Login to UNSW-ELI</p>
+      <button class="delete" aria-label="close" onclick="$('.modal').removeClass('is-active');"></button>
+    </header>
+    <section class="modal-card-body">
+      <form action="https://unsw-eli.herokuapp.com/auth/login" method="POST" id="login-form">
+      <div class="field">
+        <p class="control has-icons-left has-icons-right">
+          <input class="input" type="email" placeholder="Email" name="Email">
+          <span class="icon is-small is-left">
+            <i class="fas fa-envelope"></i>
+          </span>
+          <span class="icon is-small is-right">
+            <i class="fas fa-check"></i>
+          </span>
+        </p>
+      </div>
+      <div class="field">
+        <p class="control has-icons-left">
+          <input class="input" type="password" placeholder="Password" name="Password">
+          <span class="icon is-small is-left material-icons">
+              key
+          </span>
+        </p>
+      </div>
+      <p class="feedback"></p>
+      <div class="field">
+        <p class="control">
+          <input type="hidden" name="sendToken" value="true">
+          <input type="submit" value="Login" class="button is-success">
+        </p>
+      </div>
+    </form>
+    </section>
+  </div>
+</div>
+<div class="modal" id="confirm-modal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">PCB Implementation Receipt</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      The circuit was configured in the following way
+      <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+        <thead class="thead-dark">
+          <tr>
+            <th></th>
+            <th>Digital Line 1</th>
+            <th>Digital Line 2</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </section>
+    <footer class="modal-card-foot">
+    </footer>
+  </div>
+</div>
+<div class="modal" id="SaveLocal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Save/Load a Previous Circuit</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <div class="columns is-vcentered">
+        <div class="column has-text-centered">
+          <a href="#" data-action="save"  class="button is-success" data-page='<%-JSON.stringify(page)%>'>Save</a>
+          <a href="#" data-action="download"  class="button is-info" data-page='<%-JSON.stringify(page)%>'>Download</a>
+        </div>
+      </div>
+      <p>Drag a File onto the page or select a saved file below</p>
+      <table class="table">
+        <tbody>
+
+        </tbody>
+      </table>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-info">Confirm</button>
+    </footer>
+  </div>
+</div>
+<div class="modal" id="SyncGlobal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Sync a Cloud Circuit</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <div class="columns is-vcentered">
+        <a href="" data-action="save" class="button is-info">Pull Circuit</a>
+      </div>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-info">Confirm</button>
+    </footer>
+  </div>
+</div>
+<div class="modal" id="Instructions">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Instructions and Simulation Notes</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <p><% if(section.Instructions){%><%= section.Instructions %><%}%></p>
+        <p><b><% if(section.ImplementationNotes){%><%= section.ImplementationNotes %><%}%></b></p>
+        <p><%- section.SimulationImage %></p>
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-info">Close</button>
+      </footer>
+    </div>
+</div>
+<div class="modal" id="VariableResistor">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Variable Resistor</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <label for="vresistance" class="form-label">Resistance Value</label>
+      <center><h5 class="title"></h5></center>
+      <input type="range" class="slider is-fullwidth" min="0" max="100" step="1" name="vresistance" value='100'>
+    </section>
+      <footer class="modal-card-foot">
+        <button class="button is-info" onclick="SaveVariableResistance();">Close</button>
+      </footer>
+    </div>
+</div>
+<div class="modal" id="Override">
+  <script type="text/javascript">
+    $(document).ready(function(){
+    $("#Override input[type='password']").keyup(function(){
+        $("#Override button[data-action='open-pane']").attr("data-token",$(this).val());
+        $("#Override button[data-action='open-pane']").removeAttr("disabled");
+    })
+  })
+  </script>
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Manually Implement Circuit</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+      <div class="field">
+        <p class="control has-icons-left">
+          <input class="input" type="password" placeholder="Password">
+          <span class="icon is-small is-left">
+            <span class="material-icons">key</span>
+          </span>
+        </p>
+      </div>
+      <div class="implement-button">
+        <button data-action='open-pane' class='button is-info' data-token="" disabled>Open Control Panel</button>
+      </div>
+    </section>
+      <footer class="modal-card-foot">
+        <button class="button is-info">Close</button>
+      </footer>
+    </div>
+</div>
+<div class="modal" id="Simulation">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Simulation Output</p>
+      <button class="delete" aria-label="close"></button>
+    </header>
+      <div class="modal-card-body">
+        <h6>Simulation Output</h6>
+        <p class="sim-result"></p>
+        <h6>Validation Notes</h6>
+        <p class="validation-result"></p>
+        <div class="comparison-area"></div>
+      </div>
+      <footer class="modal-card-foot">
+        <button class="button is-info">Close</button>
+      </footer>
+    </div>
+</div>
+<div class="modal" id="Source">
+  <div class="modal-background"></div>
+  <script type="text/javascript">
+    $(document).ready(function(){
+    $("#Source input[name=voltage1],#Source input[name=voltage2]").click(function(){
+      console.log("Testing");
+      var val = ($(this).val()).toString();
+      if(!val.includes(".")) val += '.0';
+      $("#Source table td[name="+$(this).attr('name')+"]").text(val+" V")
+    })
+  });
+    </script>
+     <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Power Supply</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+        <div class="modal-card-body">
+          <table style="width: 100%;text-align: center;"><thead><tr><th>Supply 1</th><th>Supply 2</th></tr></thead><tr class="font-size:48px;"><td name="voltage1"><%if(preload){%><%=preload.voltage1%><%}else{%>5.0<%}%> V</td><td name="voltage2"><%if(preload){%><%=preload.voltage2%><%}else{%>5.0<%}%> V</td></tr></table>
+          <hr/>
+          <label for="voltage1" class="form-label">Voltage 1</label>
+          <input type="range" class="slider is-fullwidth" min="0" max="15" step="0.1" name="voltage1" value='<%if(preload){%><%=preload.voltage1%><%}else{%>5.0<%}%>'>
+          <label for="voltage2" class="form-label">Voltage 2</label>
+          <input type="range" class="slider is-fullwidth" min="0" max="15" step="0.1" name="voltage2" value='<%if(preload){%><%=preload.voltage2%><%}else{%>5.0<%}%>'>
+        </div>
+        <footer class="modal-card-foot">
+          <button class="button is-info">Close</button>
+        </footer>
+      </div>
+</div>
+<div class="modal" id="SignalGenerator">
+  <div class="modal-background"></div>
+    <script type="text/javascript">
+      $(document).ready(function(){
+      $("#SignalGenerator input[name=voltage],#SignalGenerator div[name='voltage-multiple'] input[type='radio']").click(function(){
+        var scale = 0.1;
+        var multiple = $("#SignalGenerator div[name='voltage-multiple'] input[type='radio']:checked").val()
+        var val = ($("#SignalGenerator input[name=voltage]").val()*multiple).toString();
+        if(!val.includes(".")) val += '.0';
+        $("#SignalGenerator table td[name=voltage]").text(val+" V")
+      })
+      $("#SignalGenerator input[name=frequency],#SignalGenerator div[name='freq-multiple'] input[type='radio']").click(function(){
+        var multiple = $("#SignalGenerator div[name='freq-multiple'] input[type='radio']:checked").val()
+        var val = $("#SignalGenerator input[name=frequency]").val()*multiple;
+        if(val >1e6) val = val/1e6 + " MHz"
+        else if(val > 1e3) val = val/1e3 +" kHz"
+        else val = val + " Hz"
+        $("#SignalGenerator table td[name=frequency]").text(val)
+      })
+      $("#SignalGenerator .type a").click(function(){
+        $(this).parent().parent().parent().find("a").removeClass("is-info").addClass("is-white");
+        $(this).addClass("is-info").removeClass("is-white")
+      })
+    });
+    </script>
+    <style>
+      #SignalGenerator .type .active{
+        background: cornflowerblue;
+      }
+    </style>
+     <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Signal Generator</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+        <form class="modal-card-body">
+          <h1><table style="width: 100%;text-align: center;"><tr><td name="voltage"><%if(preload){%><%=preload.siggen_voltage%><%}else{%>0 V<%}%></td><td name="frequency"><%if(preload){%><%=preload.siggen_frequency%><%}else{%>0 Hz<%}%></td></tr></table></h1>
+          <hr/>
+          <label for="voltage" class="form-label">Voltage</label>
+          <input type="range" class="slider is-fullwidth" min="0" max="100" step="1" name="voltage" value='0'>
+          <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="margin: auto;" name='voltage-multiple'>
+            <input type="radio" class="btn-check" name="btnradio-voltage" id="voltage-multiple-btnradio1" autocomplete="off" value='0.001' checked>
+            <label class="btn btn-outline-primary" for="voltage-multiple-btnradio1">100mV</label>
+          
+            <input type="radio" class="btn-check" name="btnradio-voltage" id="voltage-multiple-btnradio2" autocomplete="off" value='0.01'>
+            <label class="btn btn-outline-primary" for="voltage-multiple-btnradio2">1V</label>
+
+            <input type="radio" class="btn-check" name="btnradio-voltage" id="voltage-multiple-btnradio3" autocomplete="off" value='0.1'>
+            <label class="btn btn-outline-primary" for="voltage-multiple-btnradio3">10V</label>
+          </div>
+        <hr/>
+        <label for="frequency" class="form-label">Frequency</label>
+        <input type="range" class="slider is-fullwidth" min="0" max="1000" step="1" id="frequency" name='frequency' value='0'>
+        <br>
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="margin: auto;" name='freq-multiple'>
+          <input type="radio" class="btn-check" name="btnradio-frequency" id="freq-multiple-btnradio1" autocomplete="off" value='1' checked>
+          <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">1kHz</label>
+        
+          <input type="radio" class="btn-check" name="btnradio-frequency" id="freq-multiple-btnradio2" autocomplete="off" value='10'>
+          <label class="btn btn-outline-primary" for="freq-multiple-btnradio2">10kHz</label>
+        
+          <input type="radio" class="btn-check" name="btnradio-frequency" id="freq-multiple-btnradio3" autocomplete="off" value='100'>
+          <label class="btn btn-outline-primary" for="freq-multiple-btnradio3">100kHz</label>
+
+          <input type="radio" class="btn-check" name="btnradio-frequency" id="freq-multiple-btnradio4" autocomplete="off" value='1000'>
+          <label class="btn btn-outline-primary" for="freq-multiple-btnradio4">1MHz</label>
+        </div>
+        <hr/>
+          <div class="columns type">
+            <div class="column">
+              <a class='button is-large is-white' style="border:1px solid #c0c0c0;" name="sine">
+                <img src='../public/images/sineWave.svg'  style="background-size:50px; height: 50px;width:50px;">
+              </a>
+            </div>
+            <div class="column">
+              <a class='button is-large is-white' style="border:1px solid #c0c0c0;" name="square">
+                <img src='../public/images/squareWave.svg' style="background-size:50px; height: 50px;width:50px;">
+              </a>
+            </div>
+            <div class="column">
+              <a class='button is-large is-white' style="border:1px solid #c0c0c0;" name="triangle">
+                <img src='../public/images/triangleWave.svg' style="background-size:50px; height: 50px;width:50px;">
+              </a>
+            </div>
+            <div class="column">
+              <a class='button is-large is-white' style="border:1px solid #c0c0c0;" name="sawtooth">
+                <img src='../public/images/sawtoothWave.svg' style="background-size:50px; height: 50px;width:50px;">
+              </a>
+            </div>
+          </div>
+        </form>
+        <footer class="modal-card-foot">
+          <button class="button is-info">Close</button>
+        </footer>
+      </div>
+  </div>
+  <div class="modal" id="Oscilloscope">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Oscilloscope</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+        <section class="modal-card-body">
+          <h5 class="title">Simulation Setup</h5>
+          <div>
+          <h6 class="subtitle">Simulation Line</h6>
+            <input type="text" class="input" value="tran 20u 20m" name="simulation-line" value="">
+            <br><hr>
+            <form name="scope1-transformation">
+          <h6 class="subtitle">Scope 1 Transformation</h6>
+            <input type="radio" class="btn-check" name="type" value='none'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">None</label>
+
+            <input type="radio" class="btn-check" name="type" value='log'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">Log</label>
+          
+            <input type="radio" class="btn-check" name="type" value='mult'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio2">Scale</label>
+          
+            <input type="radio" class="btn-check" name="type" value='diff'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio3">Difference</label><br>
+            <label>Factor</label><input type="text" class="input" name="factor" value="1">
+
+            </form>
+          <hr>
+          <form name="scope2-transformation">
+          <h6 class="subtitle">Scope 2 Transformation</h6>
+            <input type="radio" class="btn-check" name="type" value='none'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">None</label>
+
+            <input type="radio" class="btn-check" name="type" value='log'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio1">Log</label>
+          
+            <input type="radio" class="btn-check" name="type" value='mult'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio2">Scale</label>
+          
+            <input type="radio" class="btn-check" name="type" value='diff'>
+            <label class="btn btn-outline-primary" for="freq-multiple-btnradio3">Difference</label><br>
+            <label>Factor</label><input type="text" class="input" name="factor" value="1">
+          </form>
+        </section>
+        <footer class="modal-card-foot">
+          <button class="button is-info">Close</button>
+        </footer>
+      </div>
+  </div>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $("#Instructions").addClass('is-active');
+    })
+  </script>
