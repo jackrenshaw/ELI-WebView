@@ -426,16 +426,30 @@ $("a[data-action='upsync']").click(function(){
   upSync();
 });
 
+$("button[data-action='implement']").dblclick(function(){
+  console.log($(this).data());
+})
+
 $("button[data-action='implement']").click(function(){
   console.log($(this).data());
   let _button = this;
-  $.get("http://127.0.0.1:3001/implement",{
+  let params = {
     token:$(_button).data("token"),
     output:{
       "Digital":$(_button).data("digital"),
       "Analog":$(_button).data("analog"),
     }
-  }).done(function(data){
+  }
+  if($(this).attr("data-overwrite")){
+        var overwriteData = JSON.parse($(this).attr("data-overwrite"));
+        if(overwriteData.length == 2 && overwriteData[0].length == 8 && overwriteData[1].length == 8)
+          for(var i=0;i<2;i++)
+            for(var p=0;p<8;p++)
+              if(overwriteData[i][p] == 0 || overwriteData[i][p] == 1)
+                params.output.Digital[i][p] = overwriteData[i][p]
+      }
+      params.output.Analog = JSON.parse($(this).attr("data-analog"));
+  $.get("http://127.0.0.1:3001/implement",params).done(function(data){
     console.log(data);
     let receipt = "";
     for(var i of data)
