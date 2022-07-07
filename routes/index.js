@@ -15,7 +15,15 @@ router.get('/b/:c', function(req, res, next) {
     build = builds[req.params.c];
     buildset = true;
   }
-  res.render('build', { code:req.params.c,type:"build",build:build,buildset:buildset,title: 'Express',page:null });
+  res.render('build', { 
+    preload:null,
+    code:req.params.c,
+    type:"build",
+    build:build,
+    buildset:buildset,
+    title: 'Express',
+    page:null 
+  });
 });
 
 router.get('/v/:c', function(req, res, next) {
