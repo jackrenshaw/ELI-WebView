@@ -1,4 +1,5 @@
 var express = require('express');
+var fs = require("fs");
 var router = express.Router();
 
 var builds = {};
@@ -9,11 +10,13 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/b/:c', function(req, res, next) {
-  let build = {board:null,connectors:null,meta:null};
+  let build = {export:null};
   let buildset = false;
   if(builds.hasOwnProperty(req.params.c)){
     build = builds[req.params.c];
     buildset = true;
+  }if(req.query.o){
+    if(fs)
   }
   res.render('build', { 
     preload:null,
@@ -24,19 +27,6 @@ router.get('/b/:c', function(req, res, next) {
     title: 'Express',
     page:null 
   });
-});
-
-router.get('/v/:c', function(req, res, next) {
-  let build = {board:null,connectors:null,meta:null};
-  let buildset = false;
-  if(builds.hasOwnProperty(req.params.c)){
-    build = builds[req.params.c];
-    buildset = true;
-  }
-  console.log(build);
-  console.log(builds);
-  console.log(req.params.c);
-  res.render('build', {code:req.params.c,type:"view",build:build,buildset:buildset, title: 'Express',page:null });
 });
 
 router.get("/api/:c",function(req,res,next){
