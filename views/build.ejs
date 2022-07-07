@@ -436,8 +436,8 @@ $("button[data-action='implement']").click(function(){
   let params = {
     token:$(_button).data("token"),
     output:{
-      "Digital":$(_button).data("digital"),
-      "Analog":$(_button).data("analog"),
+      "Digital":$("meta[name='circuit']").data("alt")[$(_button).attr("data-alt")].Output.Post.Digital,
+      "Analog":JSON.parse($(_button).attr("data-analog")),
     }
   }
   if($(this).attr("data-overwrite")){
@@ -449,6 +449,7 @@ $("button[data-action='implement']").click(function(){
                 params.output.Digital[i][p] = overwriteData[i][p]
       }
       params.output.Analog = JSON.parse($(this).attr("data-analog"));
+  console.log(params);
   $.get("http://127.0.0.1:3001/implement",params).done(function(data){
     console.log(data);
     let receipt = "";

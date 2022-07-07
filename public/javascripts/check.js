@@ -15,8 +15,8 @@ var Check = {
     Check.SetComponents();
     var checkResult = Check.CheckComponents();
     console.log(checkResult);
-    console.log("Circuit Matched");
     if(checkResult.matchedALT){
+      console.log("Circuit Matched!");
       console.log(checkResult.matchedALT);
       $("meta[name='match']").data("alt",checkResult.matchedALT);
       $("button[data-action='implement']").data("digital",$("meta[name='circuit']").data("alt")[checkResult.matchedALT].Output.Post.Digital);
